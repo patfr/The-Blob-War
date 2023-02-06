@@ -12,11 +12,17 @@ let modInfo = {
 }
 
 let VERSION = {
-	num: "0.2 blob",
-	name: "BIGGER ARMY *BLOB*",
+	num: "0.3 blob",
+	name: "EVEN BLOBIER ARMY *BLOB*",
 }
 
 let changelog = `<h1>Changelog:</h1><br><br>
+	<h3>v0.3 blob</h3><br>
+		- Added 1 Big Blob upgrade.<br>
+		- Added a hardcap to Big Blob effect on Blobs.<br>
+		- Fixed some stuff.<br>
+		- Endgame: 200 Big Blobs.<br>
+	<br>
 	<h3>v0.2 blob</h3><br>
 		- Added 1 Big Blob upgrade.<br>
 		- Endgame: 100 Big Blobs.<br>
@@ -43,7 +49,7 @@ function getPointGen() {
 		return new Decimal(0)
 
 	let gain = new Decimal(1)
-	gain = gain.mul(tmp.bb.effect)
+	gain = gain.mul(tmp.bb.effect.min(100))
 	if (hasUpgrade("bb", 12)) gain = gain.mul(4)
 	return gain
 }
@@ -56,7 +62,7 @@ var displayThings = [
 ]
 
 function isEndgame() {
-	return player.bb.points.gte(100)
+	return player.bb.points.gte(200)
 }
 
 var backgroundStyle = {

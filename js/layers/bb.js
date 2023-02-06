@@ -25,7 +25,7 @@ addLayer("bb", {
             content: [
                 ["raw-html", () => `
                     You have <h2 style='color:${layers.bb.color};text-shadow:0 0 10px ${layers.bb.color}'>${formatWhole(player.bb.points)}</h2> <img src='resources/big-blob.png' width='24'><br>
-                    which are multiplying <img src='resources/blob.png' width='24'> and<br>
+                    which are multiplying <img src='resources/blob.png' width='24'>${tmp.bb.effect.gte(100) ? " (hardcapped at x100)" : ""} and<br>
                     less effective TANASINNs by ${formatWhole(tmp.bb.effect)}
                 `],
                 "blank",
@@ -55,6 +55,17 @@ addLayer("bb", {
             title: "Bigger Army",
             description: "Quadruple Blob gain",
             cost: new Decimal(25),
+            unlocked() { return hasUpgrade(this.layer, 11) || hasUpgrade(this.layer, this.id) || (tmp.bb.upgrades[13] ?? {}).unlocked },
+            style() { return componentBorderRadius(this.layer, "upgrades", this.id, 8) },
+        },
+        13: {
+            title: "Enemy energy",
+            description: "Less effective TANASINNs (L.E.T) boost Big Blob gain",
+            cost: new Decimal(100),
+            tooltip: "Log10(Log10(Max(L.E.T, 10))) + 1",
+            effect() { return tmp.bb.tanasinnsDebuff.max(10).log10().log10().add(1) },
+            effectDisplay() { return `x${format(this.effect())}` },
+            unlocked() { return hasUpgrade(this.layer, 12) || hasUpgrade(this.layer, this.id) || (tmp.bb.upgrades[14] ?? {}).unlocked },
             style() { return componentBorderRadius(this.layer, "upgrades", this.id, 8) },
         },
     },
