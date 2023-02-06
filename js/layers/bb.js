@@ -51,6 +51,12 @@ addLayer("bb", {
             cost: new Decimal(10),
             style() { return componentBorderRadius(this.layer, "upgrades", this.id, 8) },
         },
+        12: {
+            title: "Bigger Army",
+            description: "Quadruple Blob gain",
+            cost: new Decimal(25),
+            style() { return componentBorderRadius(this.layer, "upgrades", this.id, 8) },
+        },
     },
     gainMult() {
         mult = new Decimal(1)

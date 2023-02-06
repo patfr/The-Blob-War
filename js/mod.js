@@ -12,15 +12,19 @@ let modInfo = {
 }
 
 let VERSION = {
-	num: "0.1 blob",
-	name: "THE WAR HAS BEGIN *ANGRY BLOB*",
+	num: "0.2 blob",
+	name: "BIGGER ARMY *BLOB*",
 }
 
-let changelog = `<h1>Changelog:</h1><br>
+let changelog = `<h1>Changelog:</h1><br><br>
+	<h3>v0.2 blob</h3><br>
+		- Added 1 Big Blob upgrade.<br>
+		- Endgame: 100 Big Blobs.<br>
+	<br>
 	<h3>v0.1 blob</h3><br>
 		- Big Blobs.<br>
-		- Added 1 Big Blob upgrade.
-		- Endgame: 50 Big Blobs`
+		- Added 1 Big Blob upgrade.<br>
+		- Endgame: 50 Big Blobs<br>`
 
 let winText = `The war is not over yet! It has still only just begun but sadly there is nothing more to do just yet...`
 
@@ -40,6 +44,7 @@ function getPointGen() {
 
 	let gain = new Decimal(1)
 	gain = gain.mul(tmp.bb.effect)
+	if (hasUpgrade("bb", 12)) gain = gain.mul(4)
 	return gain
 }
 
@@ -51,7 +56,7 @@ var displayThings = [
 ]
 
 function isEndgame() {
-	return player.bb.points.gte(50)
+	return player.bb.points.gte(100)
 }
 
 var backgroundStyle = {
