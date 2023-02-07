@@ -25,7 +25,7 @@ addLayer("bb", {
             content: [
                 ["raw-html", () => `
                     You have <h2 style='color:${layers.bb.color};text-shadow:0 0 10px ${layers.bb.color}'>${formatWhole(player.bb.points)}</h2> <img src='resources/big-blob.png' width='24'><br>
-                    which are multiplying <img src='resources/blob.png' width='24'>${tmp.bb.effect.gte(100) ? " (hardcapped at x100)" : ""} and<br>
+                    which are multiplying <img src='resources/blob.png' width='24'>${tmp.bb.effect.gte(tmp.bb.effectBlobcCap) ? ` (hardcapped at x${formatWhole(tmp.bb.effectBlobcCap)})` : ""} and<br>
                     less effective TANASINNs by ${formatWhole(tmp.bb.effect)}
                 `],
                 "blank",
@@ -68,6 +68,23 @@ addLayer("bb", {
             unlocked() { return hasUpgrade(this.layer, 12) || hasUpgrade(this.layer, this.id) || (tmp.bb.upgrades[14] ?? {}).unlocked },
             style() { return componentBorderRadius(this.layer, "upgrades", this.id, 8) },
         },
+        14: {
+            title: "Blob Mitosis",
+            description: "Blobs boost their own gain",
+            cost: new Decimal(150),
+            tooltip: "Log10(Max(Blobs, 10)) + 1",
+            effect() { return player.points.max(10).log10().add(1) },
+            effectDisplay() { return `x${format(this.effect())}` },
+            unlocked() { return hasUpgrade(this.layer, 13) || hasUpgrade(this.layer, this.id) || (tmp.bb.upgrades[15] ?? {}).unlocked },
+            style() { return componentBorderRadius(this.layer, "upgrades", this.id, 8) },
+        },
+        15: {
+            title: "Magic Blobs",
+            description: "Unlock a new Blob form (v0.5 blob), hardcap becomes x200, Blobs increases L.E.Ts more",
+            cost: new Decimal(300),
+            unlocked() { return hasUpgrade(this.layer, 13) || hasUpgrade(this.layer, this.id) || (tmp.bb.upgrades[15] ?? {}).unlocked },
+            style() { return componentBorderRadius(this.layer, "upgrades", this.id, 8) },
+        },
     },
     gainMult() {
         mult = new Decimal(1)
@@ -86,14 +103,20 @@ addLayer("bb", {
         effect = effect.mul(player.bb.points.add(1))
         return effect
     },
+    effectBlobcCap() {
+        let cap = 100
+        if (hasUpgrade(this.layer, 15)) cap = 200
+        return cap
+    },
     glyphs() {
         let glyphs = new Decimal(player.points)
-        glyphs = glyphs.div(2)
+        if (!hasUpgrade(this.layer, 15)) glyphs = glyphs.div(2)
         return glyphs
     },  
     tanasinnsDebuff() {
         let tanasinns = new Decimal(0)
         tanasinns = tanasinns.add(tmp.bb.glyphs)
+        tanasinns = tanasinns.mul(tmp.bb.effect)
         return tanasinns
     },
 })
