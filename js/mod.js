@@ -3,7 +3,7 @@ let modInfo = {
 	id: "TheBlobWar",
 	author: "patfr",
 	pointsName: "blobs",
-	modFiles: ["utils/borderRadius.js", "layers/bb.js", "tree.js"],
+	modFiles: ["utils/borderRadius.js", "layers/bb.js", "layers/by.js", "layers/bn.js", "tree.js"],
 
 	discordName: "",
 	discordLink: "",
@@ -12,11 +12,19 @@ let modInfo = {
 }
 
 let VERSION = {
-	num: "0.4 blob",
-	name: "EZ BLOBS *BLOB*",
+	num: "0.5 blob",
+	name: "Yes/No *BLOB YES*",
 }
 
 let changelog = `<h1>Changelog:</h1><br><br>
+	<h3>v0.5 blob</h3><br>
+		- Added 2 layers.<br>
+		- Made Big Blobs scale quicker.<br>
+		- Buffed Blob War upgrade.<br>
+		- Changed prices cuz *blob*.<br>
+		- Fixed some boosts not applying.<br>
+		- Endgame: 3 Blob Yes and 3 Blob No.<br>
+	<br>
 	<h3>v0.4 blob</h3><br>
 		- Added 2 Big Blob upgrade.<br>
 		- Changed prices cuz *blob*.<br>
@@ -55,8 +63,10 @@ function getPointGen() {
 
 	let gain = new Decimal(1)
 	gain = gain.mul(tmp.bb.effect.min(tmp.bb.effectBlobcCap))
+	if (hasUpgrade("bb", 11)) gain = gain.mul(2)
 	if (hasUpgrade("bb", 12)) gain = gain.mul(4)
 	if (hasUpgrade("bb", 14)) gain = gain.mul(upgradeEffect("bb", 14))
+	gain = gain.mul(tmp.by.effect)
 	return gain
 }
 
@@ -68,7 +78,7 @@ var displayThings = [
 ]
 
 function isEndgame() {
-	return player.bb.points.gte(500)
+	return player.by.points.gte(3) && player.bn.points.gte(3)
 }
 
 var backgroundStyle = {

@@ -4,6 +4,7 @@ addLayer("bb", {
     image: "resources/big-blob.png",
     nodeStyle: { "background-size": "cover" },
     position: 0,
+    row: 0,
     startData() { return {
         unlocked: true,
 		points: new Decimal(0),
@@ -16,8 +17,8 @@ addLayer("bb", {
     baseAmount() { return player.points },
     type: "normal",
     exponent() {
-        let exp = 0.2
-        if (hasUpgrade(this.layer, 11)) exp = 0.4
+        let exp = 0.1
+        if (hasUpgrade(this.layer, 11)) exp = 0.6
         return exp
     },
     tabFormat: {
@@ -36,18 +37,17 @@ addLayer("bb", {
                     "background-color": "#FBC21B",
                 }],
                 "blank",
-                ["raw-html", () => `
-                    You have ${format(player.points)} <img src='resources/blob.png' width='24'>`],
+                ["raw-html", () => `You have ${format(player.points)} <img src='resources/blob.png' width='24'>`],
                 "blank",
                 "blank",
                 "upgrades",
             ]
-        }
+        },
     },
     upgrades: {
         11: {
-            title: "Blob war",
-            description: "Reduce Big Blob scaling",
+            title: "Blob War",
+            description: "Reduce Big Blob scaling. And double Blob gain",
             cost: new Decimal(10),
             style() { return componentBorderRadius(this.layer, "upgrades", this.id, 8) },
         },
@@ -55,45 +55,46 @@ addLayer("bb", {
             title: "Bigger Army",
             description: "Quadruple Blob gain",
             cost: new Decimal(25),
-            unlocked() { return hasUpgrade(this.layer, 11) || hasUpgrade(this.layer, this.id) || (tmp.bb.upgrades[13] ?? {}).unlocked },
+            unlocked() { return hasUpgrade(this.layer, 11) || hasUpgrade(this.layer, this.id) || tmp.bb.upgrades[13].unlocked || player.by.unlocked || player.bn.unlocked },
             style() { return componentBorderRadius(this.layer, "upgrades", this.id, 8) },
         },
         13: {
-            title: "Enemy energy",
+            title: "Enemy Energy",
             description: "Less effective TANASINNs (L.E.T) boost Big Blob gain",
             cost: new Decimal(100),
             tooltip: "Log10(Log10(Max(L.E.T, 10))) + 1",
             effect() { return tmp.bb.tanasinnsDebuff.max(10).log10().log10().add(1) },
             effectDisplay() { return `x${format(this.effect())}` },
-            unlocked() { return hasUpgrade(this.layer, 12) || hasUpgrade(this.layer, this.id) || (tmp.bb.upgrades[14] ?? {}).unlocked },
+            unlocked() { return hasUpgrade(this.layer, 12) || hasUpgrade(this.layer, this.id) || tmp.bb.upgrades[14].unlocked || player.by.unlocked || player.bn.unlocked },
             style() { return componentBorderRadius(this.layer, "upgrades", this.id, 8) },
         },
         14: {
             title: "Blob Mitosis",
             description: "Blobs boost their own gain",
-            cost: new Decimal(150),
+            cost: new Decimal(200),
             tooltip: "Log10(Max(Blobs, 10)) + 1",
             effect() { return player.points.max(10).log10().add(1) },
             effectDisplay() { return `x${format(this.effect())}` },
-            unlocked() { return hasUpgrade(this.layer, 13) || hasUpgrade(this.layer, this.id) || (tmp.bb.upgrades[15] ?? {}).unlocked },
+            unlocked() { return hasUpgrade(this.layer, 13) || hasUpgrade(this.layer, this.id) || tmp.bb.upgrades[15].unlocked || player.by.unlocked || player.bn.unlocked },
             style() { return componentBorderRadius(this.layer, "upgrades", this.id, 8) },
         },
         15: {
             title: "Magic Blobs",
-            description: "Unlock a new Blob form (v0.5 blob), hardcap becomes x200, Blobs increases L.E.Ts more",
-            cost: new Decimal(300),
-            unlocked() { return hasUpgrade(this.layer, 13) || hasUpgrade(this.layer, this.id) || (tmp.bb.upgrades[15] ?? {}).unlocked },
+            description: "Unlock two new Blob forms, hardcap becomes x200, Blobs increases L.E.Ts more",
+            cost: new Decimal(500),
+            unlocked() { return hasUpgrade(this.layer, 13) || hasUpgrade(this.layer, this.id) || (tmp.bb.upgrades[21] ?? {}).unlocked || player.by.unlocked || player.bn.unlocked },
             style() { return componentBorderRadius(this.layer, "upgrades", this.id, 8) },
         },
     },
     gainMult() {
         mult = new Decimal(1)
+        if (hasUpgrade("bb", 13)) mult = mult.mul(upgradeEffect("bb", 13))
+        mult = mult.mul(tmp.bn.effect)
         return mult
     },
     gainExp() {
         return new Decimal(1)
     },
-    row: 0,
     hotkeys: [
         { key: "b", description: "B: Reset for Big Blobs", onPress(){ if (canReset(this.layer)) doReset(this.layer) } },
     ],
@@ -119,4 +120,5 @@ addLayer("bb", {
         tanasinns = tanasinns.mul(tmp.bb.effect)
         return tanasinns
     },
+    branches: [["by", "#806a18", 25], ["bn", "#806a18", 25]],
 })
