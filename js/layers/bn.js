@@ -39,7 +39,7 @@ addLayer("bn", {
         return new Decimal(1)
     },
     hotkeys: [
-        { key: "y", description: "Y: Reset for Blob Yes", onPress(){ if (canReset(this.layer)) doReset(this.layer) } },
+        { key: "n", description: "N: Reset for Blob No", onPress(){ if (canReset(this.layer)) doReset(this.layer) } },
     ],
     layerShown() { return hasUpgrade("bb", 15) || player.bn.unlocked },
     effect() {
